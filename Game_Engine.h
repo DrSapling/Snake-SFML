@@ -9,6 +9,13 @@ private:
     sf::RenderWindow window;
     MARGINS margins;
 
+    //Class objects
+    Texture_Manager obj;
+    std::vector<Texture_Manager*> back_groud;
+    std::vector<Texture_Manager*> free_elements;
+    Texture_Manager* pause_button;
+    Texture_Manager* winner;
+
     //TIME
     sf::Clock clock;
     sf::Time elapsed;
@@ -20,5 +27,9 @@ public:
 
     //INITIALIZATION
     void Init_Window();
+
+    //TEXTURES
+    void Set_Constant_Textures();
+    void Set_Menu_Textures();
 };
 
