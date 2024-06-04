@@ -21,12 +21,24 @@ private:
     sf::Time elapsed;
     sf::Time time_per_frame;
 
+    //MENU
+    bool In_Menu = true;
+    bool Pause = false;
+    bool WON = false;
+
+    //SCORE
+    sf::Text score_text, best_score_text;
+    sf::Font font;
+    int score = 0;
+    std::string best_score;
+
 public:
     Game_Engine();
     void Run();
 
     //INITIALIZATION
     void Init_Window();
+    void Init_Best_Score();
 
     //TEXTURES
     void Set_Constant_Textures();
