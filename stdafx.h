@@ -14,7 +14,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 #include <Dwmapi.h> //Umozliwia stworzenie okna bez ramki 
-#pragma comment (lib, "Dwmapi.lib")
+
 
 namespace DIR
 {
