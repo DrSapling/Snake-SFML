@@ -17,6 +17,9 @@ void Game_Engine::Run()
         this->elapsed += this->clock.restart();
         this->time_per_frame = sf::seconds(1.f / this->speed);
 
+        // CONTROLS
+        this->Pull_Events();
+
         // WINDOW UPDATE
         this->window.clear(sf::Color::Transparent);
         this->Draw_Objects();
@@ -107,3 +110,57 @@ void Game_Engine::Reset_Score()
 {
     this->score = 0;
 }
+//KEYBOARD
+void Game_Engine::Check_Keyboard()
+{
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
+    {
+        this->window.close();
+    }
+    if (this->last_snake_direction != DIR::RIGHT)
+    {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+        {
+            this->Pause = false;
+        }
+    }
+    if (this->last_snake_direction != DIR::LEFT)
+    {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+        {
+            this->Pause = false;
+        }
+    }
+    if (this->last_snake_direction != DIR::UP)
+    {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
+        {
+            this->Pause = false;
+        }
+    }
+    if (this->last_snake_direction != DIR::DOWN)
+    {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+        {
+            this->Pause = false;
+        }
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+    {
+        this->Pause = true;
+    }
+}
+
+void Game_Engine::Pull_Events()
+{
+    sf::Event event;
+    while (this->window.pollEvent(event))
+    {
+        if (!this->In_Menu)
+        {
+            this->Check_Keyboard();
+        }
+    }
+}
+
+

@@ -43,5 +43,8 @@ public:
     //TEXTURES
     void Set_Constant_Textures();
     void Set_Menu_Textures();
+    void Draw_Objects();
+    void Check_Keyboard();
+    void Pull_Events();
 };
 
