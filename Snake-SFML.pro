@@ -10,6 +10,7 @@ SOURCES += \
         Game_Engine.cpp \
         Texture_Manager.cpp \
         main.cpp \
+        stdafx.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -19,6 +20,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     Game_Engine.h \
     Texture_Manager.h \
+    stdafx.h
 
 LIBS += -L"C:/Qt/SFML/SFML-2.5.1-windows-gcc-7.3.0-mingw-64-bit/SFML-2.5.1/lib"
 CONFIG(debug, debug|release){
