@@ -8,6 +8,7 @@ Game_Engine::Game_Engine()
     this->Init_Text();
     this->Set_Constant_Textures();
     this->Set_Menu_Textures();
+    this->Create_Snake();
 }
 
 void Game_Engine::Run()
@@ -20,6 +21,21 @@ void Game_Engine::Run()
         // CONTROLS
         this->Pull_Events();
 
+        // SNAKE MOVEMENT
+        if (this->elapsed >= this->time_per_frame)
+        {
+            this->Smooth_Snake_Motion();
+            this->elapsed -= this->time_per_frame;
+        }
+
+        // MENU ODRADZANIA
+        if (this->Is_Snake_Dead)
+        {
+            this->Init_Replay_Menu();
+            this->Is_Snake_Dead = false;
+            this->In_Menu = true;
+            this->Reset_Game();
+        }
         // WINDOW UPDATE
         this->window.clear(sf::Color::Transparent);
         this->Draw_Objects();
@@ -49,6 +65,11 @@ void Game_Engine::Init_Text()
     this->best_score_text.setFillColor(sf::Color::White);
     this->best_score_text.setStyle(sf::Text::Regular);
     this->best_score_text.setPosition(240.f, 7.f);
+}
+
+void Game_Engine::Init_Replay_Menu()
+{
+    this->free_elements.push_back(new Texture_Manager(282.5, 312.5, 0.5f, 200.f, 64.f, "texture/replay_button.png", sf::Color(230, 230, 230, 255)));
 }
 
 void Game_Engine::Init_Window() // Wymiary okna : 565 x 625
@@ -84,6 +105,14 @@ void Game_Engine::Set_Menu_Textures()
     this->winner = new Texture_Manager(282.5, 172.5, 0.4f, 256.f, 256.f, "texture/winner.png", sf::Color(255, 255, 255, 255));
 }
 
+void Game_Engine::Delete_Textures()
+{
+    for (size_t i = 0; i < free_elements.size(); i++)
+    {
+        delete this->free_elements[i];
+    }
+}
+
 void Game_Engine::Draw_Objects()
 {
     for (size_t i = 0; i < back_groud.size(); i++)
@@ -106,10 +135,226 @@ void Game_Engine::Draw_Objects()
     }
 }
 
+//SNAKE
+void Game_Engine::Create_Snake() // pozycja zerowa x = 298.5, y = 325.5 (42.7, 101.7)
+{
+    this->snake.push_back(new Snake(298.7f, 325.7f, sf::Color(84, 118, 229), true));
+    this->snake.push_back(new Snake(294.7f, 325.7f, sf::Color(84, 118, 229)));
+    this->snake.push_back(new Snake(290.7f, 325.7f, sf::Color(84, 118, 229)));
+    this->snake.push_back(new Snake(286.7f, 325.7f, sf::Color(84, 118, 229)));
+}
+    
+    //MOVEMENT
+void Game_Engine::Smooth_Snake_Motion()
+{
+    if (this->score >= 256)
+    {
+        this->snake_direction = DIR::STOP;
+        this->last_snake_direction = DIR::STOP;
+        this->Is_Snake_Dead = true;
+        this->WON = true;
+    }
+    if (this->Is_Snake_Outside())
+    {
+        this->snake_direction = DIR::STOP;
+        this->last_snake_direction = DIR::STOP;
+        this->Is_Snake_Dead = true;
+    }
+    if (this->score > 4)
+    {
+        this->Touch_His_Body();
+    }
+    if (this->Is_Snake_On_The_Spot())
+    {
+        switch (this->snake_direction)
+        {
+        case DIR::LEFT:
+            this->last_position = this->snake[0]->GetSnakePosition();
+            this->snake[0]->Move(sf::Vector2f(-this->snake_speed, 0.f));
+            for (size_t i = 1; i < this->snake.size(); ++i)
+            {
+                this->last_position_2 = this->snake[i]->GetSnakePosition();
+                this->snake[i]->SetSnakePosition(this->last_position);
+                this->last_position = this->last_position_2;
+            }
+            this->last_snake_direction = DIR::LEFT;
+            break;
+
+        case DIR::RIGHT:
+            this->last_position = this->snake[0]->GetSnakePosition();
+            this->snake[0]->Move(sf::Vector2f(this->snake_speed, 0.f));
+            for (size_t i = 1; i < this->snake.size(); ++i)
+            {
+                this->last_position_2 = this->snake[i]->GetSnakePosition();
+                this->snake[i]->SetSnakePosition(this->last_position);
+                this->last_position = this->last_position_2;
+            }
+            this->last_snake_direction = DIR::RIGHT;
+            break;
+
+        case DIR::UP:
+            this->last_position = this->snake[0]->GetSnakePosition();
+            this->snake[0]->Move(sf::Vector2f(0.f, -this->snake_speed));
+            for (size_t i = 1; i < this->snake.size(); ++i)
+            {
+                this->last_position_2 = this->snake[i]->GetSnakePosition();
+                this->snake[i]->SetSnakePosition(this->last_position);
+                this->last_position = this->last_position_2;
+            }
+            this->last_snake_direction = DIR::UP;
+            break;
+
+        case DIR::DOWN:
+            this->last_position = this->snake[0]->GetSnakePosition();
+            this->snake[0]->Move(sf::Vector2f(0.f, this->snake_speed));
+            for (size_t i = 1; i < this->snake.size(); ++i)
+            {
+                this->last_position_2 = this->snake[i]->GetSnakePosition();
+                this->snake[i]->SetSnakePosition(this->last_position);
+                this->last_position = this->last_position_2;
+            }
+            this->last_snake_direction = DIR::DOWN;
+            break;
+
+        case DIR::STOP:
+            break;
+        }
+    }
+    else
+    {
+        switch (this->last_snake_direction)
+        {
+        case DIR::LEFT:
+            this->last_position = this->snake[0]->GetSnakePosition();
+            this->snake[0]->Move(sf::Vector2f(-this->snake_speed, 0.f));
+            for (size_t i = 1; i < this->snake.size(); ++i)
+            {
+                this->last_position_2 = this->snake[i]->GetSnakePosition();
+                this->snake[i]->SetSnakePosition(this->last_position);
+                this->last_position = this->last_position_2;
+            }
+            break;
+
+        case DIR::RIGHT:
+            this->last_position = this->snake[0]->GetSnakePosition();
+            this->snake[0]->Move(sf::Vector2f(this->snake_speed, 0.f));
+            for (size_t i = 1; i < this->snake.size(); ++i)
+            {
+                this->last_position_2 = this->snake[i]->GetSnakePosition();
+                this->snake[i]->SetSnakePosition(this->last_position);
+                this->last_position = this->last_position_2;
+            }
+            break;
+
+        case DIR::UP:
+            this->last_position = this->snake[0]->GetSnakePosition();
+            this->snake[0]->Move(sf::Vector2f(0.f, -this->snake_speed));
+            for (size_t i = 1; i < this->snake.size(); ++i)
+            {
+                this->last_position_2 = this->snake[i]->GetSnakePosition();
+                this->snake[i]->SetSnakePosition(this->last_position);
+                this->last_position = this->last_position_2;
+            }
+            break;
+
+        case DIR::DOWN:
+            this->last_position = this->snake[0]->GetSnakePosition();
+            this->snake[0]->Move(sf::Vector2f(0.f, this->snake_speed));
+            for (size_t i = 1; i < this->snake.size(); ++i)
+            {
+                this->last_position_2 = this->snake[i]->GetSnakePosition();
+                this->snake[i]->SetSnakePosition(this->last_position);
+                this->last_position = this->last_position_2;
+            }
+            break;
+
+        case DIR::STOP:
+            break;
+        }
+    }
+}
+    
+    //QUESTIONS
+bool Game_Engine::Is_Snake_On_The_Spot()
+{
+    for (int i = 0; i < 16; ++i)
+    {
+        if (static_cast<int>(this->snake[0]->GetSnakePosition().x) == i * 32 + 42)
+        {
+            for (int j = 0; j < 16; ++j)
+            {
+                if (static_cast<int>(this->snake[0]->GetSnakePosition().y) == j * 32 + 101)
+                {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool Game_Engine::Is_Snake_Outside()
+{
+    if(this->snake[0]->GetSnakePosition().x > 522.7f || this->snake[0]->GetSnakePosition().x < 42.7f || this->snake[0]->GetSnakePosition().y > 581.7f || this->snake[0]->GetSnakePosition().y < 101.7f)
+    {
+        this->snake[0]->SetDeadReason(DEAD::WALL);
+        std::cout << *this->snake[0] << std::endl;
+        return true;
+    }
+    return false;
+}
+
+    //FUNCTIONS
+void Game_Engine::Touch_His_Body()
+{
+    for (size_t i = 16; i < this->snake.size(); ++i)
+    {
+        sf::Vector2f diff = this->snake[0]->GetSnakePosition() - this->snake[i]->GetSnakePosition();
+        float distance = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+        if (distance <= 21.37f)
+        {
+            this->snake[0]->SetDeadReason(DEAD::TAIL);
+            this->snake_direction = DIR::STOP;
+            this->last_snake_direction = DIR::STOP;
+            std::cout << *this->snake[0] << std::endl;
+            this->Is_Snake_Dead = true;
+        }
+    }
+}
+
+void Game_Engine::Reset_Game()
+{
+    this->Kill_Snake();
+    this->Reset_Score();
+}
+
 void Game_Engine::Reset_Score()
 {
     this->score = 0;
 }
+
+void Game_Engine::Increase_Snake_Length()
+{
+    this->snake.push_back(new Snake(this->last_position_2.x, last_position_2.y, sf::Color(84, 118, 229)));
+    this->snake.push_back(new Snake(this->last_position_2.x, last_position_2.y, sf::Color(84, 118, 229)));
+    this->snake.push_back(new Snake(this->last_position_2.x, last_position_2.y, sf::Color(84, 118, 229)));
+    this->snake.push_back(new Snake(this->last_position_2.x, last_position_2.y, sf::Color(84, 118, 229)));
+    this->snake.push_back(new Snake(this->last_position_2.x, last_position_2.y, sf::Color(84, 118, 229)));
+    this->snake.push_back(new Snake(this->last_position_2.x, last_position_2.y, sf::Color(84, 118, 229)));
+    this->snake.push_back(new Snake(this->last_position_2.x, last_position_2.y, sf::Color(84, 118, 229)));
+    this->snake.push_back(new Snake(this->last_position_2.x, last_position_2.y, sf::Color(84, 118, 229)));
+}
+
+void Game_Engine::Kill_Snake()
+{
+    for (size_t i = 0; i < this->snake.size(); ++i)
+    {
+        delete this->snake[i];
+    }
+    this->snake.clear();
+    this->Create_Snake();
+}
+
 //KEYBOARD
 void Game_Engine::Check_Keyboard()
 {
@@ -121,6 +366,7 @@ void Game_Engine::Check_Keyboard()
     {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
         {
+            this->snake_direction = DIR::LEFT;
             this->Pause = false;
         }
     }
@@ -128,6 +374,7 @@ void Game_Engine::Check_Keyboard()
     {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
         {
+            this->snake_direction = DIR::RIGHT;
             this->Pause = false;
         }
     }
@@ -135,6 +382,7 @@ void Game_Engine::Check_Keyboard()
     {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
         {
+            this->snake_direction = DIR::DOWN;
             this->Pause = false;
         }
     }
@@ -142,12 +390,14 @@ void Game_Engine::Check_Keyboard()
     {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
         {
+            this->snake_direction = DIR::UP;
             this->Pause = false;
         }
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
     {
         this->Pause = true;
+        this->snake_direction = DIR::STOP;
     }
 }
 

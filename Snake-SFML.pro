@@ -8,6 +8,8 @@ CONFIG += c++17 cmdline
 
 SOURCES += \
         Game_Engine.cpp \
+        RenderEngine.cpp \
+        Snake.cpp \
         Texture_Manager.cpp \
         main.cpp \
         stdafx.cpp
@@ -19,6 +21,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     Game_Engine.h \
+    RenderEngine.h \
+    Snake.h \
     Texture_Manager.h \
     stdafx.h
 
