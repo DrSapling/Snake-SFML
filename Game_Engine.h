@@ -29,6 +29,12 @@ private:
     bool Is_Snake_Dead = false;
     
 
+    //APPLE
+    Apple* apple;
+
+    //COLISIONS
+    std::vector<std::vector<int>> matrix;
+
     //TIME
     sf::Clock clock;
     sf::Time elapsed;
@@ -78,6 +84,11 @@ public:
         void Increase_Snake_Length();
         void Kill_Snake();
     
+
+    //APPLE
+    void Apple_Eaten();
+    void Create_Apple();
+
     //KEYBOARD
     void Check_Keyboard();
     void Pull_Events();

@@ -9,6 +9,8 @@ Game_Engine::Game_Engine()
     this->Set_Constant_Textures();
     this->Set_Menu_Textures();
     this->Create_Snake();
+    this->Create_Apple();
+    this->Is_Snake_On_The_Spot();
 }
 
 void Game_Engine::Run()
@@ -121,6 +123,12 @@ void Game_Engine::Draw_Objects()
     }
     this->window.draw(score_text);
     this->window.draw(best_score_text);
+    this->apple->Render(this->window);
+    for (size_t i = 1; i < this->snake.size(); i++)
+    {
+        this->snake[i]->Render(this->window);
+    }
+    this->snake[0]->Render(this->window, this->snake_direction, this->last_snake_direction);
     for (size_t i = 0; i < this->free_elements.size(); i++)
     {
         this->free_elements[i]->Render(this->window);
@@ -143,8 +151,8 @@ void Game_Engine::Create_Snake() // pozycja zerowa x = 298.5, y = 325.5 (42.7, 1
     this->snake.push_back(new Snake(290.7f, 325.7f, sf::Color(84, 118, 229)));
     this->snake.push_back(new Snake(286.7f, 325.7f, sf::Color(84, 118, 229)));
 }
-    
-    //MOVEMENT
+
+//MOVEMENT
 void Game_Engine::Smooth_Snake_Motion()
 {
     if (this->score >= 256)
@@ -272,9 +280,10 @@ void Game_Engine::Smooth_Snake_Motion()
             break;
         }
     }
+    this->Apple_Eaten();
 }
-    
-    //QUESTIONS
+
+//QUESTIONS
 bool Game_Engine::Is_Snake_On_The_Spot()
 {
     for (int i = 0; i < 16; ++i)
@@ -304,7 +313,7 @@ bool Game_Engine::Is_Snake_Outside()
     return false;
 }
 
-    //FUNCTIONS
+//FUNCTIONS
 void Game_Engine::Touch_His_Body()
 {
     for (size_t i = 16; i < this->snake.size(); ++i)
@@ -353,6 +362,29 @@ void Game_Engine::Kill_Snake()
     }
     this->snake.clear();
     this->Create_Snake();
+}
+
+//APPLE
+void Game_Engine::Apple_Eaten()
+{
+    sf::Vector2f diff = this->apple->GetPosition() - this->snake[0]->GetSnakePosition();
+    float distance = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+    if (distance <= 25.f)
+    {
+        std::cout << "Deleted apple on position :" << *this->apple << std::endl;
+        this->apple->Generate_Position();
+        this->snake[0]->Update_Apple_Position(this->apple->GetPosition());
+        std::cout << "Created apple on position :" << *this->apple << std::endl;
+        this->Increase_Snake_Length();
+        this->score += 1.f;
+        this->score_text.setString(std::to_string(this->score));
+    }
+}
+
+void Game_Engine::Create_Apple()
+{
+    this->apple = new Apple();
+    this->snake[0]->Update_Apple_Position(this->apple->GetPosition());
 }
 
 //KEYBOARD
