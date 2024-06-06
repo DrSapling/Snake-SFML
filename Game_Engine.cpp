@@ -86,6 +86,17 @@ void Game_Engine::Init_Window() // Wymiary okna : 565 x 625
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 }
 
+void Game_Engine::Set_Best_Score()
+{
+    if (std::stoi(this->best_score) <= this->score)
+    {
+        std::ofstream out("data/best_score.txt", std::ios::trunc);
+        out << std::to_string(this->score);
+        out.close();
+    }
+    this->Init_Best_Score();
+}
+
 void Game_Engine::Init_Best_Score()
 {
     std::ifstream input("data/best_score.txt");
@@ -308,6 +319,7 @@ bool Game_Engine::Is_Snake_Outside()
     {
         this->snake[0]->SetDeadReason(DEAD::WALL);
         std::cout << *this->snake[0] << std::endl;
+        this->Set_Best_Score();
         return true;
     }
     return false;
@@ -325,6 +337,7 @@ void Game_Engine::Touch_His_Body()
             this->snake[0]->SetDeadReason(DEAD::TAIL);
             this->snake_direction = DIR::STOP;
             this->last_snake_direction = DIR::STOP;
+            this->Set_Best_Score();
             std::cout << *this->snake[0] << std::endl;
             this->Is_Snake_Dead = true;
         }
@@ -441,6 +454,42 @@ void Game_Engine::Pull_Events()
         if (!this->In_Menu)
         {
             this->Check_Keyboard();
+        }
+        // wykrywanie myszy oraz wcisniecia przycisku
+        if (this->back_groud[1]->GetGlobalBounds().contains(this->window.mapPixelToCoords(sf::Mouse::getPosition(this->window))) && event.type == sf::Event::MouseButtonPressed)
+        {
+            this->window.close();
+        }
+        if (this->In_Menu)
+        {
+            if (this->free_elements[0]->GetGlobalBounds().contains(this->window.mapPixelToCoords(sf::Mouse::getPosition(this->window))) && event.type == sf::Event::MouseButtonPressed)
+            {
+                this->WON = false;
+                this->In_Menu = false;
+                this->back_groud[0]->SetColor(sf::Color(255, 255, 255, 255));
+                delete this->free_elements[0];
+                this->free_elements.clear();
+            }
+        }
+        // wykrywanie myszy
+        if (this->back_groud[1]->GetGlobalBounds().contains(this->window.mapPixelToCoords(sf::Mouse::getPosition(this->window))))
+        {
+            this->back_groud[1]->SetColor(sf::Color(255, 255, 255, 255));
+        }
+        else
+        {
+            this->back_groud[1]->SetColor(sf::Color(190, 190, 190, 255));
+        }
+        if (this->In_Menu)
+        {
+            if (this->free_elements[0]->GetGlobalBounds().contains(this->window.mapPixelToCoords(sf::Mouse::getPosition(this->window))))
+            {
+                this->free_elements[0]->SetColor(sf::Color(255, 255, 255, 255));
+            }
+            else
+            {
+                this->free_elements[0]->SetColor(sf::Color(190, 190, 190, 255));
+            }
         }
     }
 }

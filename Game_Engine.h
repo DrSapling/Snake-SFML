@@ -59,6 +59,7 @@ public:
     void Init_Text();
     void Init_Replay_Menu();
     void Init_Window();
+    void Set_Best_Score();
     void Init_Best_Score();
 
     //TEXTURES
