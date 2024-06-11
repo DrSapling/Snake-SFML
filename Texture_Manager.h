@@ -18,7 +18,7 @@ public:
     void Render(sf::RenderTarget& target) override;
     void Render(sf::RenderTarget& target, DIR::Direction dir, DIR::Direction last) {};
     void Update(DIR::Direction dir, DIR::Direction last) {};
-    sf::FloatRect GetGlobalBounds();
-    void SetColor(sf::Color color);
+    sf::FloatRect GetGlobalBounds(); // Get the global bounds of the sprite
+    void SetColor(sf::Color color); // Set the color of the sprite
 };
 

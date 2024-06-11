@@ -6,7 +6,7 @@
 class Game_Engine
 {
 private:
-    //Elements to create window
+    //Elements to create game window
     sf::ContextSettings settings;
     sf::RenderWindow window;
     MARGINS margins;
@@ -21,7 +21,7 @@ private:
     //SNAKE
     std::vector<Snake*> snake;
     DIR::Direction snake_direction = DIR::STOP;
-    DIR::Direction last_snake_direction = DIR::RIGHT;
+    DIR::Direction last_snake_direction = DIR::RIGHT; //Initially snake can not go left
     sf::Vector2f last_position;
     sf::Vector2f last_position_2;
     float speed = 60;
@@ -40,7 +40,7 @@ private:
     sf::Time elapsed;
     sf::Time time_per_frame;
 
-    //MENU
+    //MENU STATE FLAGS
     bool In_Menu = true;
     bool Pause = false;
     bool WON = false;
@@ -53,7 +53,7 @@ private:
 
 public:
     Game_Engine();
-    void Run();
+    void Run(); //Method to run the main game loop
 
     //INITIALIZATION
     void Init_Text();

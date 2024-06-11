@@ -4,6 +4,7 @@
 class Snake : public RenderEngine
 {
 private:
+    //Private member variables for textures, sprites, and positions
     sf::Texture texture_eye;
     sf::Texture texture_eye_ball;
     sf::Sprite eye;
@@ -33,23 +34,23 @@ public:
     Snake(float x_arg, float y_arg, sf::Color color, bool face_arg);
     ~Snake();
 
-    void Move(sf::Vector2f vec);
-    sf::Vector2f GetSnakePosition();
-    void SetSnakePosition(sf::Vector2f vec);
+    void Move(sf::Vector2f vec); // Moves the snake segment
+    sf::Vector2f GetSnakePosition(); // Gets the current position of the snake segment
+    void SetSnakePosition(sf::Vector2f vec); // Sets the position of the snake segment
     void InitTextures() override;
     void InitSprite() override;
     void Render(sf::RenderTarget& target) override;
     void Render(sf::RenderTarget& target, DIR::Direction dir, DIR::Direction last) override;
     void Update(DIR::Direction dir, DIR::Direction last) override;
     void InitTextures(std::string path_arg) {};
-    void Set_Eye_Rotation(int angle);
-    void Update_Apple_Position(sf::Vector2f pos);
-    float Designate_APPLE_EYE_Angle(float x_arg, float y_arg);
+    void Set_Eye_Rotation(int angle); // Set the rotation of the snake's eyes
+    void Update_Apple_Position(sf::Vector2f pos); // Update the apple position for the snake's eyes
+    float Designate_APPLE_EYE_Angle(float x_arg, float y_arg); // Calculate the angle for the eyes to follow the apple
 
-    void SetDeadReason(DEAD::Dead_Reason reason_arg);
-    const DEAD::Dead_Reason GetDeadReason() const;
+    void SetDeadReason(DEAD::Dead_Reason reason_arg); // Sets the reason for the snake's death
+    const DEAD::Dead_Reason GetDeadReason() const; // Gets the reason for the snake's death
 
-    friend std::ostream& operator<<(std::ostream& os, const Snake& snake)
+    friend std::ostream& operator<<(std::ostream& os, const Snake& snake) // Overloaded output stream operator for Snake
     {
         switch (snake.GetDeadReason())
         {

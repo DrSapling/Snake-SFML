@@ -13,15 +13,15 @@
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
-#include <Dwmapi.h> //Umozliwia stworzenie okna bez ramki 
+#include <Dwmapi.h> //Header for creating a borderless window 
 
 
-namespace DIR
+namespace DIR //Directions used in the game
 {
 	enum Direction { LEFT, RIGHT, UP, DOWN, STOP };
 }
 
-namespace DEAD
+namespace DEAD //Possible reasons of death
 {
 	enum Dead_Reason { WALL, TAIL, UNKNOWN };
 }
