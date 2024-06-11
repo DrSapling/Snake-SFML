@@ -10,7 +10,8 @@ Texture_Manager::Texture_Manager(float x_pos, float y_pos, float scale, float si
     std::cout << "Texture created" << std::endl; // Print a message indicating texture creation
 }
 
-Texture_Manager::Texture_Manager(float x_pos, float y_pos, float scale, float size_x, float size_y, std::string file_path, sf::Color color) //
+Texture_Manager::Texture_Manager(float x_pos, float y_pos, float scale, float size_x, float size_y, std::string file_path, sf::Color color) // Constructor with additional parameter for color
+{
     this->InitTextures(file_path); // Initialize the texture from the file path
     this->sprite.setTexture(this->texture); // Set the texture for the sprite
     this->sprite.setOrigin(size_x, size_y); // Set the origin of the sprite
