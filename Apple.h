@@ -3,7 +3,7 @@
 
 class Apple : public RenderEngine
 {
-private:
+protected:
     sf::Texture texture;
     sf::Sprite sprite;
     const float scale = 0.08f;

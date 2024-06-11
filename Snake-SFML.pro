@@ -8,6 +8,7 @@ CONFIG += c++17 cmdline
 
 SOURCES += \
         Apple.cpp \
+        BlueApple.cpp \
         Game_Engine.cpp \
         RenderEngine.cpp \
         Snake.cpp \
@@ -22,6 +23,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     Apple.h \
+    BlueApple.h \
     Game_Engine.h \
     RenderEngine.h \
     Snake.h \

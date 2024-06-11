@@ -2,6 +2,7 @@
 #include "Texture_Manager.h"
 #include "Snake.h"
 #include "Apple.h"
+#include "BlueApple.h"
 
 class Game_Engine
 {
@@ -31,6 +32,7 @@ private:
 
     //APPLE
     Apple* apple;
+    BlueApple* blue_apple;
 
     //COLISIONS
     std::vector<std::vector<int>> matrix;
@@ -89,6 +91,7 @@ public:
     //APPLE
     void Apple_Eaten();
     void Create_Apple();
+    void Create_Blue_Apple();
 
     //KEYBOARD
     void Check_Keyboard();

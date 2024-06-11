@@ -9,6 +9,7 @@ Game_Engine::Game_Engine()
     this->Set_Menu_Textures(); // Set textures for the menu
     this->Create_Snake(); // Create the snake
     this->Create_Apple(); // Create the apple
+    this->Create_Blue_Apple();
     this->Is_Snake_On_The_Spot(); // Check if the snake is on the spot
 }
 
@@ -139,6 +140,10 @@ void Game_Engine::Draw_Objects() // Draw all game objects to the window
     {
         this->snake[i]->Render(this->window); // Draw the snake segments
     }
+    if (this->blue_apple != nullptr)
+    {
+        this->blue_apple->Render(this->window);
+    }
     this->snake[0]->Render(this->window, this->snake_direction, this->last_snake_direction); // Draw the snake head with the current direction
     for (size_t i = 0; i < this->free_elements.size(); i++)
     {
@@ -179,7 +184,7 @@ void Game_Engine::Smooth_Snake_Motion() // Smooth snake movement based on direct
         this->last_snake_direction = DIR::STOP;
         this->Is_Snake_Dead = true;
     }
-    if (this->score > 4)
+    if (this->score > 0)
     {
         this->Touch_His_Body(); // Check for collisions with the snake's body
     }
@@ -380,18 +385,37 @@ void Game_Engine::Kill_Snake()
 //APPLE
 void Game_Engine::Apple_Eaten() // Handle eating the apple
 {
+    // Check if the snake eats the regular apple
     sf::Vector2f diff = this->apple->GetPosition() - this->snake[0]->GetSnakePosition();
-    float distance = std::sqrt(diff.x * diff.x + diff.y * diff.y); // Calculate the distance between snake and apple
+    float distance = std::sqrt(diff.x * diff.x + diff.y * diff.y);
     if (distance <= 25.f)
     {
         std::cout << "Deleted apple on position :" << *this->apple << std::endl;
-        this->apple->Generate_Position(); // Generate a new position for the apple
-        this->snake[0]->Update_Apple_Position(this->apple->GetPosition()); // Update the apple's position in the snake
+        this->apple->Generate_Position();
+        this->snake[0]->Update_Apple_Position(this->apple->GetPosition());
         std::cout << "Created apple on position :" << *this->apple << std::endl;
-        this->Increase_Snake_Length(); // Increase the snake's length and update score
+        this->Increase_Snake_Length();
         this->score += 1.f;
         this->score_text.setString(std::to_string(this->score));
     }
+
+    // Check if the snake eats the blue apple
+    if (this->blue_apple != nullptr)  // Add this check
+    {
+        sf::Vector2f blue_diff = this->blue_apple->GetPosition() - this->snake[0]->GetSnakePosition();
+        float blue_distance = std::sqrt(blue_diff.x * blue_diff.x + blue_diff.y * blue_diff.y);
+        if (blue_distance <= 25.f)
+        {
+            std::cout << "Deleted blue apple on position :" << *this->blue_apple << std::endl;
+            this->blue_apple->Generate_Position();
+            this->snake[0]->Update_Apple_Position(this->blue_apple->GetPosition());
+            std::cout << "Created blue apple on position :" << *this->blue_apple << std::endl;
+            this->Increase_Snake_Length();
+            this->score -= 1.f;  // Deduct score
+            this->score_text.setString(std::to_string(this->score));
+        }
+    }
+
     if (std::to_string(this->score) > this->best_score)
     {
         this->Set_Best_Score(); // Set the best score if needed
@@ -402,6 +426,20 @@ void Game_Engine::Create_Apple()
 {
     this->apple = new Apple(); // Create a new apple
     this->snake[0]->Update_Apple_Position(this->apple->GetPosition()); // Update the apple's position in the snake
+}
+
+void Game_Engine::Create_Blue_Apple()
+{
+    int chance = std::rand() % 1;
+    if (chance == 0)
+    {
+        this->blue_apple = new BlueApple();
+        this->snake[0]->Update_Apple_Position(this->blue_apple->GetPosition());
+    }
+    else
+    {
+        this->blue_apple = nullptr;
+    }
 }
 
 //KEYBOARD
